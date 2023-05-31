@@ -1,79 +1,135 @@
 <template>
-    <div class="temp">
-      <h1>Units</h1>
-
-      <div class="row py-3">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <tr>
-                    <th>Code</th>
-                    <th>Description</th>
-                    <th>Credit Points</th>
-                    <th>Type</th>
-                </tr>
-                <!-- Using v-for to loop and list them -->
-                <tr v-for="u in getItems" v-bind:key="u.code">
-                    <td>{{u.code}}</td>
-                    <td>{{u.desc}}</td>
-                    <td>{{u.cp.toFixed(2)}}</td>
-                    <td>{{u.type}}</td>
-                </tr>
-            </table>
+    <div class="container-fluid topPadding">
+      <div class="row group mt-4 mx-5">
+        <div class="col" v-for="(tab, index) in tabs" :key="index">
+            <Tab :tabName=tab v-model="currentTab" @click="changeTab(tab)" :class="changeStatus(tab)"></Tab>
         </div>
       </div>
+
+      <div class="row group">
+        <div class="col">
+          <div class="tabPageContainer">
+            <img src="../assets/img/search.png" alt="search_pic" class="searchIcon"/>
+            <input type="text" @keyup.enter="openPopup(search)" v-model="search" class="field search" placeholder="Search property by suburb"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pop up box -->
+     <Popup v-if="popupTrigger == true" :formName="toggledButton" @close-popup="closePopup"></Popup>
+
+      <div class="row group mt-4">
+        <PropertiesList :selectedTab="currentTab" v-if="currentTab == 'Buy'"/>
+        <PropertiesList :selectedTab="currentTab" v-else-if="currentTab == 'Rent'"/>
+        <PropertiesList :selectedTab="currentTab" v-else/>
+      </div>
     </div>
-  </template>
+</template>
   
-  <script>
-  export default {
-    data(){
-      return{
-        name: 'ListingsPage',
-        msg: '',
-        units: [
-          {code:"ICT10001", desc:"Problem Solving with ICT", cp:12.5, type:"Core"},
-          {code:"COS10005", desc:"Web Development", cp:12.5, type:"Core"},
-          {code:"INF10003", desc:"Introduction to Business Information Systems", cp:12.5, type:"Core"},
-          {code:"INF10002", desc:"Database Analysis and Design", cp:12.5, type:"Core"},
-          {code:"COS10009", desc:"Introduction to Programming", cp:12.5, type:"Core"},
-          {code:"INF30029", desc:"Information Technology Project Management", cp:12.5, type:"Core"},
-          {code:"ICT30005", desc:"Professional Issues in Information Technology", cp:12.5, type:"Core"},
-          {code:"ICT30001", desc:"Information Technology Project", cp:12.5, type:"Core"},
-          {code:"COS20001", desc:"User-Centred Design", cp:12.5, type:"Software Development"},
-          {code:"TNE10005", desc:"Network Administration", cp:12.5, type:"Software Development"},
-          {code:"COS20016", desc:"Operating System Configuration", cp:12.5, type:"Software Development"},
-          {code:"SWE20001", desc:"Development Project 1 - Tools and Practices", cp:12.5, type:"Software Development"},
-          {code:"COS20007", desc:"Object Oriented Programming", cp:12.5, type:"Software Development"},
-          {code:"COS30015", desc:"IT Security", cp:12.5, type:"Software Development"},
-          {code:"COS30043", desc:"Interface Design and Development", cp:12.5, type:"Software Development"},
-          {code:"COS30017", desc:"Software Development for Mobile Devices", cp:12.5, type:"Software Development"},
-          {code:"INF20012", desc:"Enterprise Systems", cp:12.5, type:"Systems Analysis"},
-          {code:"ACC10007", desc:"Financial Information for Decision Making", cp:12.5, type:"Systems Analysis"},
-          {code:"INF20003", desc:"Requirements Analysis and Modelling", cp:12.5, type:"Systems Analysis"},
-          {code:"ACC20014", desc:"Management Decision Making", cp:12.5, type:"Systems Analysis"},
-          {code:"INF30005", desc:"Business Process Management", cp:12.5, type:"Systems Analysis"},
-          {code:"INF30003", desc:"Business Information Systems Analysis", cp:12.5, type:"Systems Analysis"},
-          {code:"INF30020", desc:"Information Systems Risk and Security", cp:12.5, type:"Systems Analysis"},
-          {code:"INF30001", desc:"Systems Acquisition & Implementation Management", cp:12.5, type:"Systems Analysis"}
-          ]
+<script>
+import { compile } from 'vue';
+import Tab from '../components/Tab.vue'
+import PropertiesList from '../process/PropertiesList.vue'
+import Popup from '../components/Popup.vue'
+
+export default {
+  components:{
+    PropertiesList, 
+    Tab,
+    Popup,
+  },
+  data(){
+    return{
+      name: 'ListingsPage',
+      tabs: ["Buy", "Rent", "Sold"],
+      currentTab: 'Buy',
+      popupTrigger: false,
+      toggledButton: '',
+      search: '',
+    }
+  },
+  computed:{
+
+  },
+  methods:{
+    changeTab: function(name){
+        this.currentTab = name;
+      },
+    changeStatus: function(tabName){
+      if(tabName == this.currentTab){
+        return "active";
+      }else{
+        "";
       }
     },
-    computed:{
-      getItems: function(){
-        return this.units;
-      }
+    openPopup: function(search){
+            this.toggledButton=this.currentTab + " " + search;
+            this.popupTrigger = true;
+            console.log(this.popupTrigger);
+        },
+    closePopup: function(e){
+        this.popupTrigger = e;
     }
+  }
 
-  }
-  </script>
+
+}
+
+</script>
   
-  <!-- Add "scoped" attribute to limit CSS to this component only -->
-  <style scoped>
-  h3 {
-    margin: 40px 0 0;
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+  .border{
+    border: 1px black solid;
   }
-  a {
-    color: #42b983;
+
+  .group{
+    margin: 0vw 2vw 0vw 2vw;
   }
-  </style>
+
+  .field{
+    width: 100%;
+    font-size: 2vw;
+    border-radius: 2vw;
+    background-color: white;
+    padding: 1vw 2vw 1vw 2vw;
+    border: none;
+  }
+
+  .tabPageContainer{
+    background-color: white;
+    border-radius: 2vw;
+    box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    padding: 2vw;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .searchIcon{
+    width: 3%;
+    height: 3%;
+    margin-left: 2vw;
+    margin-top: 1.2vw;
+  }
+  
+
+@media (max-width: 992px) {
+  .topPadding{
+    padding-top: 10vw;
+  }
+}
+
+@media (max-width: 576px) {
+  .field{
+    font-size: 4vw;
+  }
+
+  .searchIcon{
+    width: 5%;
+    height: 5%;
+    margin-left: 4vw;
+    margin-top: 2vw;
+  }
+}
+</style>
   

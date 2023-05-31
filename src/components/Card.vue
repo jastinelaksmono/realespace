@@ -67,7 +67,7 @@
     font-family: NunitoRegular;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 992px) {
     .tripleContainer{
         height: 50vw;
         display: flex;
@@ -94,6 +94,27 @@
     }
     .tripleContainer .row{
         width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .tripleContainer{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pic{
+        width: 40%;
+    }
+
+    .name{
+        margin-left: 3vw;
+    }
+
+    .desc{
+        text-align: justify;
+        padding: 0vw 2vw 0vw 6vw;
+        font-size: 2vw;
     }
 }
 </style>

@@ -3,34 +3,19 @@
     <div class="row activitiesContainer">
       <div class="pageTitle">My Activities</div>
 
-      <div class="row tabContainer">
+      <div class="row group px-5">
         <div class="col" v-for="(tab, index) in tabs" :key="index">
           <Tab :tabName=tab v-model="currentTab" @click="changeTab(tab)" :class="changeStatus(tab, currentTab)?'active':''"></Tab>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row group" >
           <div class="col tabPageContainer">
-            <ListForm :title="'properties'" v-if="currentTab == 'Properties'"></ListForm>
+            <ListForm :selectedTab="currentTab" v-if="currentTab == tabs[1]"></ListForm>
           </div>
       </div>
 
     </div>
-    <!--
-      <h1>My Activities</h1>
-        <h3>{{ currentUser.userType }}</h3>
-        <h3>{{ currentUser.username }}</h3>
-        <h3>{{ currentUser.fullname }}</h3>
-        
-        <label for="status">Status: </label>
-		    <input type="text" id="status" v-model="status">
-        <button v-on:click="addStatus()">Post</button>
-        
-        <div v-for="(s, index) in statuses" v-bind:key="s">
-            {{s}}
-            <button v-on:click="delStatus(index)">Del</button>
-        </div>
-    -->
     
   </div>
   </template>
@@ -51,6 +36,9 @@
         currentTab: 'Inspections',
       }
     },
+    created(){
+      this.currentUser.userType == "agents" ? this.tabs[1] = "Properties" : this.tabs[1] = "Favourites";
+    },
     methods:{
       changeTab: function(name){
         this.currentTab = name;
@@ -67,12 +55,7 @@
   <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style scoped>
 .activitiesContainer{
-  margin: 2vw;
-}
-
-.tabContainer{
-  padding-left: 5vw;
-  padding-right: 5vw;
+  padding: 2vw 4vw 2vw 4vw;
 }
 
 .tabPageContainer{
@@ -82,10 +65,15 @@
   padding: 5vw;
 }
 
-@media (max-width: 1024px) {
+.group{
+  margin-left: 0;
+}
+
+@media (max-width: 992px) {
   .pageTitle{
     margin-top: 4vw;
   }
 }
+
 </style>
   

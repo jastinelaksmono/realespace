@@ -63,7 +63,7 @@ export default {
       titles: ["Search for properties", "Come for an inspection", "Get your own living space"],
       actionDesc: ["We provide the flexibility for you to find the right properties based on your preferences. Make your own account with us now and get notified for latest properties!",
                   "To rent a property, our platform provides ranges of prices according to your budget and requirements. Make your own account with us now and get notified for latest properties!",
-                  "To sell a property, our platform is able to differ selling type. Seller can do an auction or private sale to interested buyers. Get you agency's code and create an account with us as an agent!"]
+                  "To sell a property, our platform is able to differ selling type. Seller can do an auction or private sale to interested buyers. Get your agency's code and create an account with us as an agent!"]
     }
   },
 }
@@ -72,7 +72,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-/* || Generals */
+/* || Cards */
 .cardTitle{
   font-size: 3vw;
   font-family: NunitoBold;
@@ -141,7 +141,7 @@ export default {
   margin-right: 4vw;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 992px) {
   .cardContainer{
     flex-direction: column;
   }
@@ -151,6 +151,19 @@ export default {
   .carousel {
     margin-top: 7vw;
   }
+
+}
+
+@media (max-width: 576px) {
+  .titleContainer{
+    margin: 2vw 2vw 0vw 0vw;
+    position: absolute;
+  }
+
+  .topPadding{
+    padding-top: 8vw;
+  }
+  
 }
 
 </style>

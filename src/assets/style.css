@@ -63,6 +63,17 @@ label{
   color: #5379F6;
 }
 
+.formTitle{
+  font-size: 3.5vw;
+  font-family: NunitoBold;
+  color: #5379F6;
+  text-align: center;
+}
+
+.group{
+  margin-left: 0;
+}
+
 /* || DROPDOWN */
 .dropbtn
 {
@@ -104,6 +115,9 @@ select {
 .btn{
   background-color: #5379F6;
   color: white;
+  border-radius: 2vw;
+  font-family: NunitoRegular;
+  padding: 0.5vw 1vw 0.5vw 1vw;
   box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
@@ -114,13 +128,16 @@ select {
   box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
+.errorMsg{
+  color: #FE766A;
+  font-family: NunitoRegular;
+  font-size: 1.5vw;
+}
 
-/*
-@media (min-width: 1024px) {
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+
+
+@media (max-width: 992px) {
+  .errorMsg{
+    font-size: 2.5vw;
   }
 }
-*/

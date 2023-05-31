@@ -175,7 +175,12 @@
         if(this.isUsernameExist){
           this.errors[3] = "Username has already existed";
         }else{
-          this.checkCode();
+          if(this.userType == 'agents'){
+            this.checkCode();
+          }else{
+            this.createNewAccount();
+            this.changeRoute();
+          }
         }
       },
       checkUsername: function(){
@@ -208,7 +213,7 @@
                 }
             });
             if(this.agency != ''){
-              console.log(this.agency);
+              this.createNewAccount();
               this.changeRoute();
             }else{
               this.errors[6] = 'Code not found';
@@ -218,6 +223,16 @@
       changeRoute(){
         this.currentUser.setAll(this.userType, this.username, this.fullname, this.agency);
         this.$router.replace({ path: '/MyActivities' });
+      },
+      createNewAccount: function(){
+        const userRef = ref(db, this.userType + "/" + this.username);
+            set(userRef, {
+                fname: this.fname,
+                lname: this.lname,
+                email: this.email,
+                pass: this.pass
+            });
+            this.userType == "agents" ? set(ref(db, this.userType + "/agency"),{agency: this.agency}): '';
       },
       reset() {
 			  this.$refs.form.reset();
@@ -235,11 +250,7 @@
 }
 
 .field{
-  background-color: #cecece;
-  border-radius: 2vw;
-  font-size: 1.5vw;
-  font-family: NunitoRegular;
-  padding: 0.5vw 1vw 0.5vw 1vw;
+
   margin-bottom: 2vw;
 }
 
@@ -285,16 +296,7 @@
   margin-left: 1vw;
 }
 
-.group{
-  margin-left: 0;
-}
-.errorMsg{
-  color: #FE766A;
-  font-family: NunitoRegular;
-  font-size: 1.5vw;
-}
-
-@media (max-width: 1024px) {
+@media (max-width: 992px) {
   label{
     font-size: 3vw;
     font-family: NunitoRegular;
@@ -318,10 +320,6 @@
 
   .codeContainer label{
     margin-top: 1vw;
-  }
-
-  .errorMsg{
-    font-size: 2.5vw;
   }
 }
 </style>

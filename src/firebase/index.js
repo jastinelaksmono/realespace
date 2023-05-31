@@ -50,7 +50,16 @@ function getChild(){
         });
 }
 
-getChild();
+function updateData(collection)
+{
+  const updates = {};
+  updates['/'+ collection + '/' + doc + '/' + attr ] = value;
+
+  update(ref(db), updates);
+
+}
+
+//updateData('properties', 'prop0', 'bedrooms', 3);
 
 function matchPass(collection, username)
 {
@@ -60,6 +69,11 @@ function matchPass(collection, username)
         console.log(data);
     })
 }
+
+
+/*
+dataProps: [[propId]]
+ */
 
 //Users.isUsernameExist('agents', 'jocelynt');
 //export default Users;

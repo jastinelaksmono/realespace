@@ -1,85 +1,99 @@
 <template>   
 
-    <div class="row">
-        <button type="button" class="col-sm-3 field btn" @click="popupTrigger = true">+ add new property</button>
+    <div class="row" v-if="currentUser.userType == 'agents'">
+        <button type="button" class="col-sm-3 field btn" @click="openPopup('add')">+ add new property</button>
     </div>
 
-    <Popup v-if="popupTrigger == true" :formName="'addProperty'" @close-popup="closeAddForm"></Popup>
+    <!-- Pop up box -->
+    <Popup v-if="popupTrigger == true" :formName="toggledButton" @close-popup="closePopup" @update-list="updateList"></Popup>
 
-    <div class="row">
-        <div class="col-sm-4 tableTitle">{{tabTitle}}</div>
+    <!-- Table title and filter -->
+    <div class="row" v-if="currentUser.userType == 'agents'">
+        <div class="col-sm-4 tableTitle">{{tableTitle}}</div>
         <div class="col">
-            <FilterOption :filter="'me'" :tab-selected="title" @update-list="updateList"></FilterOption>
+            <FilterOption :filter="lister" :tab-selected="selectedTab" @update-list="updateList"></FilterOption>
         </div>
     </div>
 
-    <div class="tableContainer">
-        <div class="row">
-            <div :class="adjustHeaderSize(index)" v-for="(header, index) in headers" :key="index">
-                {{ header.substring(0,1).toUpperCase() + header.substring(1,header.length) }} <div v-if="index ==2">&nbsp; (m<sup>2</sup>)</div>
+    <!-- Table list of properties -->
+    <div class="tableContainer"  v-if="currentUser.userType == 'agents'">
+        <div class="row" style="paddingLeft: 2.5vw">
+            <div :class="adjustColSize(index, 'header')" v-for="(header, index) in headers" :key="index">
+                {{ formatHeader(header, index) }} <div v-if="index ==2">(m<sup>2</sup>)</div>
             </div>
         </div>
         <div class='row dataRow' v-for="(property, index) in getItems" :key="index">
-            <div :class="adjustColSize(index)" v-for="(prop, index) in property" :key="index">{{prop}}</div>
-            <div class="col editBtnContainer">
-                <button class='editButton' id='edit'>
-                    <img src='../assets/img/edit_client_icon.png' id='editBtnIcon' alt='edit_client_btn'>
+            <div :class="adjustColSize(index, lister)" v-for="(prop, index) in property" :key="index">{{index != headers.length-1 ? prop: ''}}
+                <button class='editButton' id='edit' v-if="index == headers.length-1 && lister == 'me'" @click="openPopup('edit ' + prop)">
+                    edit
                 </button>
             </div>
+
         </div>
 
-        
-        <!-- Vuejs Paginate -->
-        <div class="row">
-            <Paginate 
-                :page-count="pageCount"    
-                :page-range="5" 
-                :margin-pages="1"
-                :click-handler="clickCallback" 
-                :prev-text=" 'Prev' " 		
-                :next-text="'Next'" 
-                :container-class="'pagination'" 
-                :active-class="'currentPage'">
-            </Paginate>
-        </div>
     
+
     </div>
+
+    <div class="row">
+        <PropertiesList :selectedTab="selectedTab" v-if="selectedTab == 'Favourites'"></PropertiesList>
+    </div>
+
+    <!-- Vuejs Paginate -->
+    <paginate 
+            :page-count="2"    
+            :page-range="5" 
+            :margin-pages="1"
+            :click-handler="clickCallback" 
+            :prev-text=" 'Prev' "       
+            :next-text="'Next'" 
+            :container-class="'pagination'" 
+            :active-class="'currentPage'">
+        </paginate>
 
 </template>
   
 <script>
 import db from "../firebase/index";
-import Paginate from "../components/Paginate.js";
 import { ref, set, onValue, update } from "firebase/database";
 import FilterOption from '@/components/FilterOption.vue';
 import Popup from "../components/Popup.vue";
+import paginate from "vuejs-paginate-next";
+import PropertiesList from "../process/PropertiesList.vue";
 export default {
     props: {
-        title: String,
+        selectedTab: String,
     },
     components:{
         FilterOption,
-        Paginate, 
-        Popup
+        Popup,
+        paginate,
+        PropertiesList
     },
     data(){
         return{
-            tabTitle: 'Properties listed by',
+            tableTitle: 'Properties listed by',
             popupTrigger: false,
-            headers: ["type", "address", "size", "suburb", "agent",""],
+            headers: ["type", "address", "size", "suburb", "agent", "propId"],
             nodes: [],
             pageCount: 0,
             currentPage: 1,
-            agentName: ''
+            agentName: '',
+            toggledButton: '',
+            lister: 'me',
         }
+    },
+    created(){
+        this.selectedTab == "Properties" ? this.tableTitle = 'Properties listed by' : this.tableTitle = 'Saved Properties';
+       
     },
     computed: {
         getItems: function() {
             this.pageCount = Math.ceil(this.nodes.length/5);
-			let current = this.currentPage * 5; 
-			let start = current - 5;
-			return this.nodes.slice(start, current);
-		}
+            let current = this.currentPage * 5; 
+            let start = current - 5;
+            return this.nodes.slice(start, current);
+        }
     },
     methods:{
         adjustHeaderSize: function(index){
@@ -91,23 +105,46 @@ export default {
                 return 'col header';
             }
         },
-        adjustColSize: function(index){
-            if(index == 1){
-                return 'col dataCol headerLong';
+        adjustColSize: function(index, filter){
+            var format = [];
+            if(filter != 'me'){
+                format[0] = "blank";
+                format[1] = filter == 'header'? "header" : "dataCol";
             }else{
-                return 'col dataCol';
+                format[0] = "editBtnContainer";
+                format[1] = "dataCol";
             }
+            
+            if(index == 1){
+                return 'col ' + format[1] + ' headerLong';
+            }else if(index == 0 || index ==3){
+                return 'col ' + format[1] + ' headerMedium';
+            }
+            else if(index == this.headers.length-1){
+                return 'col ' + format[0];
+            }
+            else{
+                return 'col ' + format[1];
+            }
+             
         },
-        closeAddForm: function(e){
+        openPopup: function(selectedBtn){
+            this.toggledButton=selectedBtn + " " + this.selectedTab + " " + this.lister;
+            this.popupTrigger = true;
+        },
+        closePopup: function(e){
             this.popupTrigger = e;
         },
         updateList: function(e){
-            this.nodes = [];
-            var listRef = ref(db, this.title);
+            this.lister = e;
+            var listRef = ref(db, this.selectedTab.toLowerCase());
             onValue(listRef, (snapshot) => {
-                var attr = e=="me"? 'agent' : 'agency';
-                var value = e=="me"? this.currentUser.username : this.currentUser.agency;
+                var attr = this.lister=="me"? 'agent' : 'agency';
+                var value = this.lister=="me"? this.currentUser.username : this.currentUser.agency;
                 var node = [];
+                if(snapshot.exists()){
+                    this.nodes = [];
+                }
                 snapshot.forEach(child => {
                     if(child.child(attr).val() == value){
                         for(let i=0; i<this.headers.length-1; i++){
@@ -115,15 +152,23 @@ export default {
                             if(i==this.headers.length-2){
                                 this.getAgentName(result);
                                 node.push(this.agentName);
-                                this.nodes.push(node);
-                                node = [];
                             }else{
                                 node.push(result);
                             }
                         }
+                        node.push(child.key);
+                        this.nodes.push(node);
+                        node = [];
                     }
                 });
             });
+        },
+        formatHeader: function(header, index){
+            if(index == this.headers.length-1){
+                return "";
+            }else{
+                return header.substring(0,1).toUpperCase() + header.substring(1,header.length);
+            }
         },
         getAgentName: function(agent){
             var listRef = ref(db, 'agents/' + agent);
@@ -132,20 +177,20 @@ export default {
             });
         },
         //sets the clicked page
-		clickCallback: function(pageNum) {
-			this.currentPage = Number(pageNum);
-		}
+        clickCallback: function(pageNum) {
+            this.currentPage = Number(pageNum);
+        }
     }
 };
 </script>
   
 <style scoped>
-@import "vue-awesome-paginate/dist/style.css";
+
 .tableTitle{
     font-family: NunitoSemiBold;
     font-size: 3vw;
     color: #5379F6;
-    width: 35%;
+    width: 40%;
 }
 
 .tableContainer{
@@ -160,10 +205,13 @@ export default {
 .btn{
     margin-left: auto;
     margin-bottom: 2vw;
+    font-size: 2vw;
+    width: 25vw;
 }
-.btn:hover{
+.btn:hover, .editButton:hover{
     color: #5379F6;
     border: 0.2vw #5379F6 solid;
+    background-color: white;
 }
 
 
@@ -175,19 +223,25 @@ export default {
     padding-bottom: 1vw;
     display: flex;
     flex-direction: row;
+    padding-left: 0;
 }
 .headerLong{
     flex-grow: 0;
     flex-basis: 30%;
 }
+
+.headerMedium{
+    flex-grow: 0;
+    flex-basis: 18%;
+}
 .blank{
     flex-grow: 0;
-    flex-basis: 7%;
+    flex-basis: 12%;
 }
 
 /* || Data */
 .dataRow{
-    padding: 1vw 0vw 1vw 0vw;
+    padding: 1vw 0vw 1vw 2.5vw;
 }
 .dataRow:hover{
     box-shadow: 0px 2px 3px #636363;
@@ -196,7 +250,11 @@ export default {
 .dataCol{
     margin-top: 0.2vw;
     font-family: NunitoBold;
-    font-size: 1.5vw;
+    font-size: 2vw;
+    display: flex;
+    flex-direction: row;
+    padding-right: 0;
+    padding-left: 0;
 }
 
 /* || Edit Button */
@@ -207,85 +265,46 @@ export default {
 .editButton{
     border-radius: 5vw;
     background-color: #5379F6;
-    width: 3vw;
+    width: 7vw;
     float: right;
     border-style: none;
+    font-family: NunitoRegular;
+    color: white;
+    font-size: 2vw;
+    padding: 0.2vw 1vw 0.2vw 1vw;
 }
+
+.editButton:hover #editBtnIcon{
+    content:url("../assets/img/edit_icon_blue.png");
+}
+
 #editBtnIcon{
     width: 70%;
     margin: 0.5vw 0vw 0.5vw 0.2vw;
 }
 
-.pagination{
-    --bs-pagination-border-radius:2vw;
-    --bs-pagination-font-size:1.5vw;
-    --bs-pagination-padding-x: 0.8rem;
-    --bs-pagination-color: #5379F6;
-    --bs-pagination-bg:none;
-    --bs-pagination-border-width: 0px;
-    --bs-pagination-hover-color: white;
-    --bs-pagination-hover-bg: #5379F6;
-    --bs-pagination-disabled-bg:none;
+@media (max-width: 992px) {
+    
 }
 
-@media (max-width: 1024px) {
-    .tableTitle{
-        width: 37%;
+@media (max-width: 576px) {
+    .header{
+        font-size: 1.5vw;
     }
-    .editButton{
-        border-radius: 5vw;
-        background-color: #5379F6;
-        width: 3vw;
-        height: 3vw;
-    }
+
     .blank{
         flex-grow: 0;
-        flex-basis: 8%;
+        flex-basis: 14%;
     }
-    .headerLong{
-        flex-grow: 0;
-        flex-basis: 30%;
-    }
-    
-    .dataCol{
-        margin-top: 0.2vw;
-        font-size: 2vw;
-    }
-    #editBtnIcon{
-        width: 90%;
-        margin-top: 0;
-    }
-}
 
-.pagination-container {
-    display: flex;
-    column-gap: 10px;
-  }
-  .paginate-buttons {
-    height: 40px;
-    width: 40px;
-    border-radius: 20px;
-    cursor: pointer;
-    background-color: rgb(242, 242, 242);
-    border: 1px solid rgb(217, 217, 217);
-    color: black;
-  }
-  .paginate-buttons:hover {
-    background-color: #d8d8d8;
-  }
-  .active-page {
-    background-color: #3498db;
-    border: 1px solid #3498db;
-    color: white;
-  }
-  .active-page:hover {
-    background-color: #2988c8;
-  }
-
-@media (max-width: 800px) {
-    #editBtnIcon{
-        margin-top: -1vw;
+    .btn{
+        width: 30vw;
+        font-size: 2.5vw;
+        border-radius: 3vw;
+        margin-right: 2vw;
+        margin-bottom: 4vw;
     }
 }
 
 </style>
+

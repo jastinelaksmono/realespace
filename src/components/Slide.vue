@@ -1,12 +1,12 @@
 <template>
-    <div class="slide">
-      <transition name="slide">
-        <slot></slot>
-      </transition>
-    </div>
-  </template>
+  <div class="slide">
+    <transition name="slide">
+      <slot></slot>
+    </transition>
+  </div>
+</template>
   
-  <script>
+<script>
   export default {};
   </script>
   
@@ -25,4 +25,4 @@
   .slide-leave-from {
     opacity: 1;
   }
-  </style>
+</style>

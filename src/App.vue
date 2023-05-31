@@ -23,14 +23,14 @@
 
   <div id="topnavContainer">
     <div class="row">
-      <div class="col-sm menuContainer" v-on:click="openCloseMenu()"> 
+      <div class="col menuContainer" v-on:click="openCloseMenu()"> 
         <img src="./assets/img/menu_grey.png" class="openCloseIcon" alt="close_icon">
         Menu 
       </div>
-      <div class="col-sm">
+      <div class="col">
         <h4 class="topnavTitle">realespace</h4>
       </div>
-      <div class="col-sm menuContainer textPosition">
+      <div class="col menuContainer textPosition">
         <router-link  to="/LoginSignup" @click="logout()" replace>{{isLoggedIn()}}</router-link>
       </div>
     </div>
@@ -74,14 +74,14 @@ export default {
     },
     checkMenu: function(){
       if(this.menu == 'opened'){
-        if(window.innerWidth>1024){
+        if(window.innerWidth>992){
           return "0";
         }else{
           return "20vw"
         }
         
       }else{
-        if(window.innerWidth>1024){
+        if(window.innerWidth>992){
           return "-40vw";
         }else{
           return "-20vw";
@@ -221,7 +221,7 @@ export default {
   opacity: 0;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 992px) {
   .topnavTitle{
     font-size: 5vw;
     background: linear-gradient(0.25turn, #4b68c8, #D0DDFF, #4b68c8);

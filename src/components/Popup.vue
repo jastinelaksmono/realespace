@@ -1,38 +1,78 @@
 <template>
     <div class="popup">
-		<div class="popup-inner">
+		<div :class="adjustPanelSize()">
 
             <div class="row">
                 <div class="col closeText" @click="closePopup()">close
-                    <img src="../assets/img/close_grey.png" class="closeIcon" alt="close_icon">
+                    <img src="../assets/img/close_grey.png" :class="adjustCloseSize()" alt="close_icon">
                 </div>
                 
             </div>
+
+            <div class="row formTitle" v-if="notif == true">{{ msg }}</div>
             
-            <AddPropertyForm></AddPropertyForm>
+            <div class=" row formScroll" v-if="notif == false && passedTab.includes(arrayInputs[0]) ">
+                <AddEditProperty :passed-data="arrayInputs" @execute-operation="executeOperation"></AddEditProperty>     
+            </div>
+
+            <div class="row formScroll" v-if="!passedTab.includes(arrayInputs[0])">
+                <FilterForm :passed-data="arrayInputs"></FilterForm>
+            </div>
 
 		</div>
 	</div>
 </template>
 
 <script>
-import AddPropertyForm from '@/process/AddPropertyForm.vue';
+import AddEditProperty from '@/process/AddEditProperty.vue';
+import Tab from '../components/Tab.vue';
+import FilterForm from '@/process/FilterForm.vue';
+
 export default {
     props:{
         formName: String,
     },
     components:{
-        AddPropertyForm
+        AddEditProperty,
+        Tab,
+        FilterForm
     },
     data(){
         return{
-            
+            arrayInputs: this.formName.split(" "),
+            notif: false,
+            msg: '',
+            passedTab:["add", "edit"],
         }
     },
+    created(){
+
+    },
     methods:{
-       closePopup: function(){
-            this.$emit("close-popup", false)
-       }
+        closePopup: function(){
+            this.notif = false;
+            this.$emit("close-popup", false);
+        },
+        executeOperation: function(e){
+            console.log(e[0]);
+            this.$emit("update-list", e[0]);
+            this.notif = true;
+            this.msg = e[1];
+        },
+        adjustPanelSize: function(){
+            if(this.notif){
+                return 'popup-inner notifPanel';
+            }else{
+                return 'popup-inner';
+            }
+        },
+        adjustCloseSize: function(){
+            if(window.innerWidth<=576 && this.notif){
+                return 'closeIcon iconLarger';
+            }else{
+                return 'closeIcon';
+            }
+        }
     }
   };
 </script>
@@ -53,23 +93,35 @@ export default {
 .popup-inner {
     background: #FFF;
     padding: 3vw;
-    width:50vw;
     border-radius: 2vw;
-    overflow-y: scroll;
-    height: 40vw;
 }
+
+.notifPanel{
+    height: 25vw;
+}
+
+.row{
+    width:60vw;
+}
+
+.formScroll{
+    overflow-y: scroll;
+    height: 35vw;
+}
+
 .closeText{
     font-family: NunitoSemiBold;
-    font-size: 1.5vw;
+    font-size: 3vw;
     margin-left: 33vw;
-    margin-top: 1vw;
+    margin-bottom: 1vw;
     text-align: right;
     color: #858282;
 }
 .closeIcon{
     float: right;
     margin-left: 1vw;
-    width: 20%;
+    width: 15%;
+    margin-top: 0.5vw;
 }
 
 .closeText:hover{
@@ -81,20 +133,58 @@ export default {
 }
 
 
-@media (max-width: 1024px) {
-    .popup-inner {
-        padding: 5vw;
-        width:75vw;
-        height: 70vw;
-    }
+@media (max-width: 992px) {
 
     .closeText{
-        font-size: 3vw;
+        font-size: 4vw;
         margin-left: 43vw;
     }
     .closeIcon{
         width: 15%;
         margin-top: 1vw;
+    }
+
+    .popup-inner {
+        padding: 5vw;
+    }
+
+    .row{
+        width:70vw;
+    }
+
+    .formScroll{
+        overflow-y: scroll;
+        height: 40vw;
+    }
+}
+
+@media (max-width: 576px) {
+    .popup-inner{
+        width: 100%;
+        height: 92vh;
+        padding-right: 0;
+    }
+
+    .notifPanel{
+        width: 80%;
+        height: 25vw;
+    }
+
+    .row{
+        width: 100%;
+    }
+
+    .formScroll{
+        height: 95%;
+    }
+
+    .closeIcon{
+        width: 10%;
+        margin-top: 1vw;
+    }
+
+    .iconLarger{
+        width: 15%;
     }
 }
 </style>

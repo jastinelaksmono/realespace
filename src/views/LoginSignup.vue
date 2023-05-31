@@ -105,7 +105,7 @@
 }
 
 
-@media (max-width: 1024px) {
+@media (max-width: 992px) {
   .pic{
     width: 50%;
     display: block;
