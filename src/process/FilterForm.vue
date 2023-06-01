@@ -9,8 +9,7 @@
 
         <div class="row">
             <div class="label">Price Range</div>
-            <Slider :slider-value="filter[2][1]"></Slider>
-
+            <CustomSlider :times-num="500000" :name="'price'"></CustomSlider>
         </div>
 
         <div v-for="(label, idx) in labels" :key="idx">
@@ -24,6 +23,11 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="label">Land Size</div>
+            <CustomSlider :times-num="100" :name="'size'"></CustomSlider>
+        </div>
        
     </form>
 </template>
@@ -31,7 +35,7 @@
 import db from "../firebase/index";
 import {ref, set, onValue, update } from "firebase/database";
 import Tab from "../components/Tab.vue"
-import Slider from "../components/Slider.vue"
+import CustomSlider from "../components/CustomSlider.vue"
 export default {
     props:{
         passedData: Array, // structure -> [propertyStatus, searchOutput]
@@ -39,7 +43,7 @@ export default {
     },
     components:{
         Tab,
-        Slider
+        CustomSlider
     },
     data(){
         return{
