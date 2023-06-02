@@ -23,7 +23,7 @@
     </Carousel>
 
     <!-- Section title -->
-    <div class="row cardContainer paddingTop" style="flex-direction: column;">
+    <div class="row cardContainer topPadding" style="flex-direction: column;">
       <div class="col cardTitle">
         What are your goals?
       </div>
@@ -151,13 +151,26 @@ export default {
   .carousel {
     margin-top: 7vw;
   }
+  .pic{
+    width: 70vw;
+    margin-left: 11vw;
+    margin-top: 6vw;
+  }
 
 }
 
 @media (max-width: 576px) {
   .titleContainer{
-    margin: 2vw 2vw 0vw 0vw;
+    margin: 2vw 0vw 0vw 4vw;
     position: absolute;
+  }
+
+  .cardTitle{
+    font-size: 4vw;
+  }
+
+  .cardSubtitle{
+    font-size: 3vw;
   }
 
   .topPadding{

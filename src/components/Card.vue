@@ -101,6 +101,7 @@
     .tripleContainer{
         display: flex;
         flex-direction: column;
+        height: 55vw;
     }
 
     .pic{
@@ -113,8 +114,8 @@
 
     .desc{
         text-align: justify;
-        padding: 0vw 2vw 0vw 6vw;
-        font-size: 2vw;
+        padding: 0vw 2vw 4vw 6vw;
+        font-size: 3vw;
     }
 }
 </style>

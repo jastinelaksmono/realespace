@@ -90,8 +90,12 @@
 
         <div class="row" style="margin-top: 3vw;">
             <button v-if="passedData[0] == 'add'" type="button" class="field btn" @click="validateNewId()">Add</button>
-            <button v-if="passedData[0] == 'edit'" class="col field reverse left" @click="deleteProperty()">Delete</button>
-            <button v-if="passedData[0] == 'edit'" type="button" class="col field btn right alignLeft" @click="executeProperties('update')">Update</button>
+            <div class="col left" v-if="passedData[0] == 'edit'">
+                <button class="container-fluid field reverse" @click="deleteProperty()">Delete</button>
+            </div>
+            <div class="col right" v-if="passedData[0] == 'edit'">
+                <button type="button" class="container-fluid field btn alignLeft" @click="executeProperties('update')">Update</button>
+            </div>
         </div>
        
     </form>
@@ -241,17 +245,8 @@ export default {
     width: 100%;
 }
 
-.btn:hover{
-    color: white;
-    background-color: #5379F6;
-}
-
 .reverse{
     margin-right: 2vw;
-}
-
-.alignLeft{
-    margin-left: 2vw;
 }
 
 .left{
@@ -294,6 +289,8 @@ export default {
         margin-bottom: 3vw;
         margin-top: 2vw;
     }
+
+    
 }
 
 @media (max-width: 576px) {
@@ -313,7 +310,6 @@ export default {
     .formTitle{
         font-size: 8vw;
         margin-bottom: 3vw;
-        margin-top: 5vw;
     }
 
     .row{

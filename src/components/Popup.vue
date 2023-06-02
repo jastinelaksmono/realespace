@@ -2,7 +2,7 @@
     <div class="popup">
 		<div :class="adjustPanelSize()">
 
-            <div class="row">
+            <div :class="adjustClosePadding()">
                 <div class="col closeText" @click="closePopup()">close
                     <img src="../assets/img/close_grey.png" :class="adjustCloseSize()" alt="close_icon">
                 </div>
@@ -16,7 +16,7 @@
             </div>
 
             <div class="row formScroll" v-if="!passedTab.includes(arrayInputs[0])">
-                <FilterForm :passed-data="arrayInputs"></FilterForm>
+                <FilterForm :passed-data="arrayInputs" @execute-filter="executeFilter"></FilterForm>
             </div>
 
 		</div>
@@ -59,6 +59,11 @@ export default {
             this.notif = true;
             this.msg = e[1];
         },
+        executeFilter: function(e){
+            this.$emit("update-property", e);
+            this.$emit("close-popup", false);
+
+        },
         adjustPanelSize: function(){
             if(this.notif){
                 return 'popup-inner notifPanel';
@@ -71,6 +76,13 @@ export default {
                 return 'closeIcon iconLarger';
             }else{
                 return 'closeIcon';
+            }
+        },
+        adjustClosePadding: function(){
+            if(!this.notif){
+                return 'row topPadding';
+            }else{
+                return 'row';
             }
         }
     }
@@ -99,7 +111,10 @@ export default {
 .notifPanel{
     height: 25vw;
 }
-
+.topPadding{
+    padding-top: 0vw;
+    padding-bottom: 2vw;
+}
 .row{
     width:60vw;
 }
@@ -161,7 +176,7 @@ export default {
 @media (max-width: 576px) {
     .popup-inner{
         width: 100%;
-        height: 92vh;
+        height: 100vh;
         padding-right: 0;
     }
 
@@ -170,12 +185,17 @@ export default {
         height: 25vw;
     }
 
+    .topPadding{
+        padding-top: 8vw;
+        padding-bottom: 4vw;
+    }
+
     .row{
         width: 100%;
     }
 
     .formScroll{
-        height: 95%;
+        height: 80%;
     }
 
     .closeIcon{

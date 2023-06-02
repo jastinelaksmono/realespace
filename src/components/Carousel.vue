@@ -117,7 +117,6 @@
         align-items: center;
         justify-content: center;
         width: 3vw;
-        width: 3vw;
     }
 
     .prevBtn:hover{
@@ -135,7 +134,6 @@
     bottom: 2vw;
     width: 100%;
     display: flex;
-    gap: 2vw;
     justify-content: center;
     align-items: center;
   
@@ -143,6 +141,7 @@
       cursor: pointer;
       width: 2vw;
       height: 2vw;
+      margin-left: 2vw;
       border-radius: 2vw;
       background-color: #cecece;
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -152,4 +151,19 @@
       background-color: #5379F6;
     }
   }
+
+  @media (max-width: 768px) {
+    .navigate {
+        .prevBtn, .nextBtn{
+          height: 5vw;
+      }
+    }
+
+  }
+
+  @media (max-width: 576px) {
+
+  
+  }
+
   </style>

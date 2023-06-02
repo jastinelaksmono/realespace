@@ -54,7 +54,7 @@ export default {
   methods:{
     isLoggedIn: function(){
       if(this.currentUser.username == ''){
-        return "Login/Signup"
+        return "Login"
       }else{
         return "Logout";
       }
@@ -223,13 +223,13 @@ export default {
 
 @media (max-width: 992px) {
   .topnavTitle{
-    font-size: 5vw;
+    font-size: 6vw;
     background: linear-gradient(0.25turn, #4b68c8, #D0DDFF, #4b68c8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
   .menuContainer, .menuContainer a{
-    font-size: 3vw;
+    font-size: 4vw;
     padding-top: 1vw;
   }
   #sidebarContainer{
@@ -245,7 +245,7 @@ export default {
   }
   #sidenav a
   {
-    font-size: 3vw;
+    font-size: 4vw;
     padding: 4vw 0vw 2vw 0vw;
   }
   .dashboardIcon, .listingsIcon, .allClientsIcon{ 
@@ -253,6 +253,7 @@ export default {
     height: 10%;
     margin-left: 5vw;
     margin-right: 2vw;
+    margin-top: 0.8vw;
   }
   .activeSign{
     width: 4%;

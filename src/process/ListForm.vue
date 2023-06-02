@@ -19,7 +19,7 @@
     <div class="tableContainer"  v-if="currentUser.userType == 'agents'">
         <div class="row" style="paddingLeft: 2.5vw">
             <div :class="adjustColSize(index, 'header')" v-for="(header, index) in headers" :key="index">
-                {{ formatHeader(header, index) }} <div v-if="index ==2">(m<sup>2</sup>)</div>
+                {{ formatHeader(header, index) }}
             </div>
         </div>
         <div class='row dataRow' v-for="(property, index) in getItems" :key="index">
@@ -36,7 +36,7 @@
     </div>
 
     <div class="row">
-        <PropertiesList :selectedTab="selectedTab" v-if="selectedTab == 'Favourites'"></PropertiesList>
+        <PropertiesList :selectedTab="selectedTab" :passed-filter="[]" v-if="selectedTab == 'Favourites'"></PropertiesList>
     </div>
 
     <!-- Vuejs Paginate -->
@@ -164,11 +164,15 @@ export default {
             });
         },
         formatHeader: function(header, index){
-            if(index == this.headers.length-1){
-                return "";
-            }else{
-                return header.substring(0,1).toUpperCase() + header.substring(1,header.length);
+            var headerTitle = "";
+            if(index != this.headers.length-1){
+                headerTitle = header.substring(0,1).toUpperCase() + header.substring(1,header.length);
+                if(index == 2){
+                    headerTitle  += " m" + decodeURI('%C2%B2');
+                }
             }
+
+            return headerTitle;
         },
         getAgentName: function(agent){
             var listRef = ref(db, 'agents/' + agent);
@@ -208,7 +212,7 @@ export default {
     font-size: 2vw;
     width: 25vw;
 }
-.btn:hover, .editButton:hover{
+.editButton:hover{
     color: #5379F6;
     border: 0.2vw #5379F6 solid;
     background-color: white;
@@ -304,6 +308,8 @@ export default {
         margin-right: 2vw;
         margin-bottom: 4vw;
     }
+
+    
 }
 
 </style>

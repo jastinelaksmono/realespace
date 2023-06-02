@@ -16,12 +16,12 @@
       </div>
 
       <!-- Pop up box -->
-     <Popup v-if="popupTrigger == true" :formName="toggledButton" @close-popup="closePopup"></Popup>
+     <Popup v-if="popupTrigger == true" :formName="toggledButton" @close-popup="closePopup" @update-property="updateProperty"></Popup>
 
       <div class="row group mt-4">
-        <PropertiesList :selectedTab="currentTab" v-if="currentTab == 'Buy'"/>
-        <PropertiesList :selectedTab="currentTab" v-else-if="currentTab == 'Rent'"/>
-        <PropertiesList :selectedTab="currentTab" v-else/>
+        <PropertiesList :selectedTab="currentTab" :passed-filter="filter" v-if="currentTab == 'Buy'"/>
+        <PropertiesList :selectedTab="currentTab" :passed-filter="filter" v-else-if="currentTab == 'Rent'"/>
+        <PropertiesList :selectedTab="currentTab" :passed-filter="filter" v-else/>
       </div>
     </div>
 </template>
@@ -46,6 +46,7 @@ export default {
       popupTrigger: false,
       toggledButton: '',
       search: '',
+      filter: [],
     }
   },
   computed:{
@@ -69,6 +70,11 @@ export default {
         },
     closePopup: function(e){
         this.popupTrigger = e;
+    },
+    updateProperty: function(e){
+      //console.log(e);
+      this.currentTab = e[0][1];
+      this.filter = e;
     }
   }
 

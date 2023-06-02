@@ -48,8 +48,8 @@
     </div>
 
     <div class="row group">
-      <button class="col field btn reverse left" @click="reset()">reset</button>
-      <button type="button" class="col field btn right" @click="validateAll()">{{name.toLowerCase()}}</button>
+      <button class="col field reverse left" @click="reset()">Reset</button>
+      <button type="button" class="col field btn" @click="validateAll()">{{name}}</button>
     </div>
   </form>
     
@@ -273,7 +273,14 @@
   color: white;
 }
 
+.btn:hover{
+  color: #5379F6;
+  background-color: white;
+  border: 0.2vw #5379F6 solid;
+}
+
 .reverse{
+  margin-top: 3vw;
   background-color: white;
   color: #5379F6;
 }
@@ -292,10 +299,6 @@
   margin-right: 1vw;
 }
 
-.right{
-  margin-left: 1vw;
-}
-
 @media (max-width: 992px) {
   label{
     font-size: 3vw;
@@ -309,7 +312,7 @@
     margin-bottom: 2vw;
   }
 
-  .bordered{
+  .bordered, .btn:hover{
     border-width: 0.4vw;
   }
 
@@ -320,6 +323,10 @@
 
   .codeContainer label{
     margin-top: 1vw;
+  }
+
+  .left{
+    margin-right: 4vw;
   }
 }
 </style>

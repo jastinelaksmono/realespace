@@ -11,7 +11,7 @@
 
       <div class="row group" >
           <div class="col tabPageContainer">
-            <ListForm :selectedTab="currentTab" v-if="currentTab == tabs[1]"></ListForm>
+            <ListForm :selectedTab="currentTab" v-if="currentTab == tabs[0]"></ListForm>
           </div>
       </div>
 
@@ -32,12 +32,17 @@
     data(){
       return{
         name: 'MyActivities',
-        tabs: ["Inspections", "Properties"],
-        currentTab: 'Inspections',
+        tabs: ["Properties", "Inspections"],
+        currentTab: "",
       }
     },
     created(){
-      this.currentUser.userType == "agents" ? this.tabs[1] = "Properties" : this.tabs[1] = "Favourites";
+      if(this.currentUser.userType == "agents"){
+        this.tabs[0] = "Properties";
+      }else{
+        this.tabs[0] = "Favourites";
+      }
+      this.currentTab = this.tabs[0];
     },
     methods:{
       changeTab: function(name){
