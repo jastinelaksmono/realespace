@@ -57,8 +57,10 @@
   }
   </script>
   
-  <!-- Add "scoped" attribute to limit CSS to this component only -->
-  <style scoped>
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+
+
 .activitiesContainer{
   padding: 2vw 4vw 2vw 4vw;
 }
@@ -75,8 +77,8 @@
 }
 
 @media (max-width: 992px) {
-  .pageTitle{
-    margin-top: 4vw;
+  .topPadding{
+    padding-top: 14vw;
   }
 }
 

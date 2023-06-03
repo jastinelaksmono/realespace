@@ -174,7 +174,7 @@ export default {
   }
 
   .topPadding{
-    padding-top: 8vw;
+    padding-top: 9vw;
   }
   
 }

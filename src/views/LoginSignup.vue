@@ -106,6 +106,9 @@
 
 
 @media (max-width: 992px) {
+  .topPadding{
+    padding-top: 14vw;
+  }
   .pic{
     width: 50%;
     display: block;

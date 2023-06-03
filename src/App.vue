@@ -223,13 +223,13 @@ export default {
 
 @media (max-width: 992px) {
   .topnavTitle{
-    font-size: 6vw;
+    font-size: 5vw;
     background: linear-gradient(0.25turn, #4b68c8, #D0DDFF, #4b68c8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
   .menuContainer, .menuContainer a{
-    font-size: 4vw;
+    font-size: 3vw;
     padding-top: 1vw;
   }
   #sidebarContainer{
@@ -241,11 +241,11 @@ export default {
     width: 12%;
   }
   #sidenav{
-    padding-top: 10vw;
+    padding-top: 13vw;
   }
   #sidenav a
   {
-    font-size: 4vw;
+    font-size: 3vw;
     padding: 4vw 0vw 2vw 0vw;
   }
   .dashboardIcon, .listingsIcon, .allClientsIcon{ 
@@ -253,12 +253,27 @@ export default {
     height: 10%;
     margin-left: 5vw;
     margin-right: 2vw;
-    margin-top: 0.8vw;
   }
   .activeSign{
     width: 4%;
     height: 6vw;
     border-radius: 1.5vw 0vw 0vw 1.5vw;
+  }
+}
+
+@media (max-width: 576px) {
+  .topnavTitle{
+    font-size: 6vw;
+  }
+
+  #sidenav a, .menuContainer, .menuContainer a
+  {
+    font-size: 4vw;
+  }
+
+  .dashboardIcon, .listingsIcon, .allClientsIcon{ 
+    margin-top: 0.8vw;
+    margin-left: 3vw;
   }
 }
 </style>
