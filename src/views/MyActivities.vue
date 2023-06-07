@@ -12,14 +12,14 @@
         </div>
       </div>
 
-      <div class="row group" >
+      <div class="row group tabPageContainer">
           <!--Display added properties list by an agent/agency-->
-          <div class="col tabPageContainer"  v-if="currentTab == 'Properties'">
+          <div class="col"  v-if="currentTab == 'Properties'">
             <ListForm :selectedTab="currentTab"></ListForm>
           </div>
 
           <!--Display the logged in seekers favourite properties list-->
-          <div class="row tabPageContainer"  v-else>
+          <div class="row" v-else>
             <PropertiesList :selectedTab="currentTab" :passed-filter="[]"></PropertiesList>
           </div>
       </div>
@@ -85,7 +85,6 @@
   box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.2);
   padding: 5vw 5vw 2vw 5vw;
 }
-
 .group{
   margin-left: 0;
 }
