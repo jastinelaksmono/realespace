@@ -1,4 +1,4 @@
-//import functions from SDK
+// import functions from SDK
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app"
 import { getDatabase, ref, child, set, update, onValue, get } from "firebase/database"
@@ -19,67 +19,3 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 export default db;
-
-
-function isExist(collection, username)
-{
-    var userRef = ref(db, collection + '/' + username);
-    onValue(userRef, (snapshot) => {
-        console.log(snapshot.exists());
-    });
-}
-
-function checkUser(){
-    var userRef = ref(db, collection);
-        onValue(userRef, (snapshot) => {
-            snapshot.forEach(element => {
-                if(element.key == username){
-                    console.debug("true");
-                }
-            });
-        });
-}
-
-function getChild(){
-        var userRef = ref(db, 'agencies');
-        onValue(userRef, (snapshot) => {
-            var e = [];
-            snapshot.forEach(child => {
-                e.push(child.child("code").val());
-            });
-        });
-}
-
-function updateData(collection)
-{
-  const updates = {};
-  updates['/'+ collection + '/' + doc + '/' + attr ] = value;
-
-  update(ref(db), updates);
-
-}
-
-//updateData('properties', 'prop0', 'bedrooms', 3);
-
-function matchPass(collection, username)
-{
-    var userRef = ref(db, collection + '/' + username + '/email');
-    onValue(userRef, (snapshot) => {
-        const data = snapshot.val();
-        console.log(data);
-    })
-}
-
-
-/*
-dataProps: [[propId]]
- */
-
-//Users.isUsernameExist('agents', 'jocelynt');
-//export default Users;
-
-//isExist('agents', 'jocelynt');
-//checkUser('agents', 'jocelynn');
-//matchPass('agents', 'jocelynt');
-//test('agents', 'jocelynt');
-//for(s in snapshot)

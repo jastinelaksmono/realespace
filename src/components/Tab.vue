@@ -1,27 +1,36 @@
 <template>   
-    <div :class="applyStyle()">{{ name }}</div>
+    <!-- Display tab according to the chosen style -->
+    <div :class="applyStyle()">{{ name != null ? name : num }}</div>
 </template>
   
 <script>
+
 export default {
     props: {
-        tabName: String,
-        tabStyle: Number
+        tabName: String,        //name of the tab
+        tabNum: Number,         //number value of the tab
+        tabStyle: Number        //number of chosen stye (1/2)
     },
     data(){
         return{
-           name: this.tabName == null ? 'null' : this.tabName,
-           tab: this.tabStyle == null ? 'null' : this.tabStyle,
+
+            //Assigning a null value to to null probs
+            name: this.tabName == null ? null : this.tabName,
+            num: this.tabNum == null ? null : this.tabNum,
+            tab: this.tabStyle == null ? null : this.tabStyle,
         }
     },
+    //Change 0 value to become 'Any'
     created(){
-        if(this.name == 0){
-            this.name = "Any";
-        }else if(!isNaN(this.name)){
-            this.name = this.name + "+";
+        if(this.num == 0){
+            this.num = "Any";
+        }else if(!isNaN(this.num)){
+            this.num = this.num + "+";
         }
     },
     methods:{
+
+        //Apply tab style according to the chosen style value passed
         applyStyle: function(){
             if(this.tab == 2){
                 return "tabContainer2";

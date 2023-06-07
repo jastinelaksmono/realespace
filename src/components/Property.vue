@@ -1,37 +1,46 @@
 <template>
-    <div class="container cardContainer">
-        <img :src="require(`../assets/img/${details[1].type}_1.png`)" alt="house_pic" class="propPic">
-        <div class="propStatus" v-if="details[1].status != 'rent'">{{ details[1].sale_method }}</div>
 
-        <div class="row" style="text-align: left;">
-          <div class="col desc">
-            <div class="address">${{ details[1].price.toLocaleString('en-US') }}</div>
-          </div>
-          <div class="col desc" v-if="currentUser.userType == 'seekers'">
-            <img :src="require(`../assets/img/${iconIndicator}.png`)" @click="saveProperty()"  alt="favourite_icon" class="favourite">
-          </div>
-        </div>
+  <!-- The property card container -->
+  <div class="container cardContainer">
 
-        <div class="row">
-          <div class="col desc">
-            {{ details[1].type }}<br>
-            
-            {{ details[1].address + ", " + details[1].suburb}}<br>
+    <!-- Displaying the image according to the property type (house/apartment)-->
+    <img :src="require(`../assets/img/${details[1].type}_1.png`)" alt="house_pic" class="propPic">
 
-            <img src="../assets/img/bedroom.png" alt="bedroom_pic" class="icon"/>
-            {{ isZero(details[1].bedrooms) }} &nbsp;
+    <!-- Displaying the property's sale method (all/auction/private sale))-->
+    <div class="propSaleMethod" v-if="details[1].status != 'rent'">{{ details[1].sale_method }}</div>
 
-            <img src="../assets/img/bathroom.png" alt="bathroom_pic" class="icon"/>
-            {{ isZero(details[1].bathrooms) }} &nbsp;
+    <!-- Displaying the properrt price and favourite buttton -->
+    <div class="row" style="text-align: left;">
+      <div class="col desc">
+        <div class="address">${{ details[1].price.toLocaleString('en-US') }}</div>
+      </div>
+      <div class="col desc" v-if="currentUser.userType == 'seekers'">
+        <img :src="require(`../assets/img/${iconIndicator}.png`)" @click="saveProperty()"  alt="favourite_icon" class="favourite">
+      </div>
+    </div>
 
-            <img src="../assets/img/carspace.png" alt="carspace_pic" class="icon"/>
-            {{ isZero(details[1].car_spaces) }} &nbsp; 
+    <!-- Displaying the property's further descriptions -->
+    <div class="row">
+      <div class="col desc">
+        {{ details[1].type }}<br>
+        
+        {{ details[1].address + ", " + details[1].suburb}}<br>
 
-            <img src="../assets/img/landsize.png" alt="landsize_pic" class="icon"/>
-            {{ isZero(details[1].size) }}m<sup>2</sup>
-          </div>
-        </div>
-    </div>     
+        <img src="../assets/img/bedroom.png" alt="bedroom_pic" class="icon"/>
+        {{ isZero(details[1].bedrooms) }} &nbsp;
+
+        <img src="../assets/img/bathroom.png" alt="bathroom_pic" class="icon"/>
+        {{ isZero(details[1].bathrooms) }} &nbsp;
+
+        <img src="../assets/img/carspace.png" alt="carspace_pic" class="icon"/>
+        {{ isZero(details[1].car_spaces) }} &nbsp; 
+
+        <img src="../assets/img/landsize.png" alt="landsize_pic" class="icon"/>
+        {{ isZero(details[1].size) }}m<sup>2</sup>
+      </div>
+    </div>
+  </div>     
+
 </template>
   
 <script>
@@ -40,17 +49,19 @@
 
   export default {
     props: {
-      details: Array
+      details: Array                  //The property details or information
     },
     data(){
         return{
-          iconIndicator: "star",
+          iconIndicator: "star",      //The favourite icon indicator (star image)
         }
     },
     created(){
-        this.checkFavourite();
+        this.checkFavourite();        //Check if property is saved in property seeker's favourite
       },
     methods:{
+
+      //Display '-' symbol on xero bedroom/bathroom/carspaces amount of the property
       isZero: function(amount){
         if (amount == 0){
           return "-";
@@ -58,13 +69,8 @@
           return amount;
         }
       },
-      starHover: function(){
-        if(this.iconIndicator == "star"){
-          this.iconIndicator = "star_clicked";
-        }else{
-          this.iconIndicator = "star";
-        }
-      },
+
+      //Check the star icon image of a property
       isFavourite: function(){
         if(this.iconIndicator == "star"){
           return false;
@@ -72,19 +78,23 @@
           return true;
         }
       },
+
+      //Add property to property seeker's favourites list
       saveProperty: function(){
         const updates = {};
         if(!this.isFavourite()){
           updates['/seekers/' + this.currentUser.username + '/favourites/' + this.details[0]] = "";
-          update(ref(db), updates);
           this.iconIndicator = "star_clicked";
+          update(ref(db), updates);
         }else{
           updates['/seekers/' + this.currentUser.username + '/favourites/' + this.details[0]] = null;
-          update(ref(db), updates);
           this.iconIndicator = "star";
-          this.$emit('update-favourites', "");
+          update(ref(db), updates);
         }
+        this.$emit('update-favourites', "");
       },
+
+      //Check if property is saved in property seeker's favourite
       checkFavourite: function(){
         var seekerRef = ref(db, 'seekers/'+ this.currentUser.username + "/favourites");
           onValue(seekerRef, (snapshot) => {
@@ -118,7 +128,7 @@
   height: 30vw;
 }
 
-.propStatus{
+.propSaleMethod{
   font-family: NunitoSemiBold;
   color: white;
   background-color: rgb(128, 128, 128, 0.5);
@@ -165,7 +175,7 @@
     margin-top: 1vw;
   }
 
-  .propStatus{
+  .propSaleMethod{
     top: 4vw;
     right: 4.5vw;
     border-radius: 2vw;
@@ -188,7 +198,7 @@
     margin-top: 2vw;
   }
 
-  .propStatus{
+  .propSaleMethod{
     top: 7vw;
     right: 9vw;
     font-size: 3vw;

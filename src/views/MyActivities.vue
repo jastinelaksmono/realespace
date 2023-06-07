@@ -1,20 +1,28 @@
 <template>
   <div class="container-fluid topPadding">
     <div class="row activitiesContainer">
+
+      <!--Displaying the page title-->
       <div class="pageTitle">My Activities</div>
 
+      <!-- Displaying maintainable tabs of users' activities-->
       <div class="row group px-5">
         <div class="col" v-for="(tab, index) in tabs" :key="index">
-          <Tab :tabName=tab v-model="currentTab" @click="changeTab(tab)" :class="changeStatus(tab, currentTab)?'active':''"></Tab>
+          <Tab :tabName=tab v-model="currentTab" class="active" v-single-tab></Tab>
         </div>
       </div>
 
       <div class="row group" >
-          <div class="col tabPageContainer">
-            <ListForm :selectedTab="currentTab" v-if="currentTab == tabs[0]"></ListForm>
+          <!--Display added properties list by an agent/agency-->
+          <div class="col tabPageContainer"  v-if="currentTab == 'Properties'">
+            <ListForm :selectedTab="currentTab"></ListForm>
+          </div>
+
+          <!--Display the logged in seekers favourite properties list-->
+          <div class="row tabPageContainer"  v-else>
+            <PropertiesList :selectedTab="currentTab" :passed-filter="[]"></PropertiesList>
           </div>
       </div>
-
     </div>
     
   </div>
@@ -23,19 +31,22 @@
   <script>
   import Tab from '../components/Tab.vue'
   import ListForm from "../process/ListForm.vue"
+  import PropertiesList from '@/process/PropertiesList.vue'
 
   export default {
     components:{
-      Tab,
-      ListForm
+      Tab,               //the tab component
+      ListForm,          //the list of properties component
+      PropertiesList     //the list of saved properties list templates (favourites)
     },
     data(){
       return{
-        name: 'MyActivities',
-        tabs: ["Properties", "Inspections"],
-        currentTab: "",
+        name: 'MyActivities',         //the title of the page
+        tabs: ["Properties"],         //the tab's name
+        currentTab: "",               //current tab
       }
     },
+    //set up the tab configuration based on user type
     created(){
       if(this.currentUser.userType == "agents"){
         this.tabs[0] = "Properties";
@@ -45,9 +56,12 @@
       this.currentTab = this.tabs[0];
     },
     methods:{
+      //Used if more than one tabs want to be added
       changeTab: function(name){
         this.currentTab = name;
       },
+
+      //Used if more than one tabs want to be added
       changeStatus: function(tabName, currentTab){
         return tabName == currentTab;
       }
@@ -69,7 +83,7 @@
   background-color: white;
   border-radius: 2vw;
   box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.2);
-  padding: 5vw;
+  padding: 5vw 5vw 2vw 5vw;
 }
 
 .group{

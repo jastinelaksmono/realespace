@@ -1,11 +1,14 @@
 <template>
     <div class="container-fluid topPadding">
+
+      <!-- The tabs for different property statuses -->
       <div class="row group mt-4 mx-5">
         <div class="col" v-for="(tab, index) in tabs" :key="index">
             <Tab :tabName=tab v-model="currentTab" @click="changeTab(tab)" :class="changeStatus(tab)"></Tab>
         </div>
       </div>
 
+      <!--The search container for property suburb-->
       <div class="row group">
         <div class="col">
           <div class="tabPageContainer">
@@ -16,13 +19,15 @@
       </div>
 
       <!-- Pop up box -->
-     <Popup v-if="popupTrigger == true" :formName="toggledButton" @close-popup="closePopup" @update-property="updateProperty"></Popup>
+     <Popup v-if="popupTrigger == true" :formName="inputInformation" @close-popup="closePopup" @update-property="updateProperty"></Popup>
 
+     <!-- Display list of properties according to the property status selected (the tab above)-->
       <div class="row group mt-4">
         <PropertiesList :selectedTab="currentTab" :passed-filter="filter" v-if="currentTab == 'Buy'"/>
         <PropertiesList :selectedTab="currentTab" :passed-filter="filter" v-else-if="currentTab == 'Rent'"/>
         <PropertiesList :selectedTab="currentTab" :passed-filter="filter" v-else/>
       </div>
+
     </div>
 </template>
   
@@ -34,28 +39,28 @@ import Popup from '../components/Popup.vue'
 
 export default {
   components:{
-    PropertiesList, 
-    Tab,
-    Popup,
+    PropertiesList,               //The list of properties
+    Tab,                          //the tabs for property's statuses
+    Popup,                        //the pop up panel to display filter form
   },
   data(){
     return{
-      name: 'ListingsPage',
-      tabs: ["Buy", "Rent", "Sold"],
-      currentTab: 'Buy',
-      popupTrigger: false,
-      toggledButton: '',
-      search: '',
-      filter: [],
+      name: 'ListingsPage',                 //the name of the page
+      tabs: ["Buy", "Rent", "Sold"],        //the property statuses
+      currentTab: 'Buy',                    //current selected tab name
+      popupTrigger: false,                  //Pop up trigger button
+      inputInformation: '',                 //the content to be passed to popup
+      search: '',                           //the value (property suburb) of the search container to be filtered
+      filter: [],                           //the filter value
     }
   },
-  computed:{
-
-  },
   methods:{
+    //assign current tab name
     changeTab: function(name){
-        this.currentTab = name;
-      },
+      this.currentTab = name;
+    },
+
+    //change the status of the selected tab
     changeStatus: function(tabName){
       if(tabName == this.currentTab){
         return "active";
@@ -63,22 +68,26 @@ export default {
         "";
       }
     },
+
+    //Display or open the pop up panel
     openPopup: function(search){
-            this.toggledButton=this.currentTab + " " + search;
-            this.popupTrigger = true;
-            console.log(this.popupTrigger);
-        },
+        this.inputInformation=this.currentTab + " " + search;
+        this.popupTrigger = true;
+        console.log(this.popupTrigger);
+    },
+
+    //Hide or close the popup panel
     closePopup: function(e){
         this.popupTrigger = e;
     },
+
+    //assign filter from the passed event (update-property)
     updateProperty: function(e){
       //console.log(e);
       this.currentTab = e[0][1];
       this.filter = e;
     }
   }
-
-
 }
 
 </script>

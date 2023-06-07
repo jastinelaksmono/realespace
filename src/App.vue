@@ -1,11 +1,11 @@
 <template>
-  <div id="sidebarContainer"  v-bind:style="{marginLeft: checkMenu()}">
 
-    <!-- Display the navbar -->
+   <!-- Sliding side navbar-->
+  <div id="sidebarContainer"  v-bind:style="{marginLeft: checkMenu()}">
     <nav id = "sidenav">
-      <router-link  to="/App" replace>
+      <router-link  to="/" replace>
           <img src="./assets/img/dashboard_grey.png" class="dashboardIcon" alt="dashboard_icon">
-          <div class = "navName">Dashboard</div>
+          <div class = "navName">Homepage</div>
           <div class="activeSign"></div>
       </router-link>
       <router-link  to="/ListingsPage" replace>
@@ -21,6 +21,8 @@
     </nav>
   </div>
 
+
+  <!-- Top navbar-->
   <div id="topnavContainer">
     <div class="row">
       <div class="col menuContainer" v-on:click="openCloseMenu()"> 
@@ -44,12 +46,16 @@
 
 <script>
 
+
 export default {
   name: 'App',
   data(){
     return{
       menu: 'closed',
     }
+  },
+  created(){
+    this.$router.replace({ path: '/' });
   },
   methods:{
     isLoggedIn: function(){
@@ -65,7 +71,6 @@ export default {
       }
     },
     openCloseMenu: function(){
-      //this.$refs.sidebarContainer
       if(this.menu == 'closed'){
         this.menu = 'opened';
       }else{

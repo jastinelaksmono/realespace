@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid topPadding">
 
-    <!-- Stages of real estate -->
+    <!-- Stages of real estate displayed in carousel-->
     <Carousel
       :navigation="true"
       :pagination="true"
@@ -36,9 +36,9 @@
       <Card :title="'Rent'" :fileName="'rent.png'" class="middleContainer" :desc="actionDesc[1]"></Card>
       <Card :title="'Sell'" :fileName="'sell.png'" :desc="actionDesc[2]"></Card>
     </div>
-    
 
   </div>
+
 </template>
 
 <script>
@@ -49,18 +49,22 @@ import Card from '../components/Card.vue';
 export default {
   name: 'HomePage',
   components: {
-    Carousel,
-    Slide,
-    Card
-  },setup() {
-    const carouselSlides = ["search_property.png", "open_house.png", "home_cover.png"];
-
-    return { carouselSlides };
+    Carousel,             //The carousel component
+    Slide,                //The slide Component
+    Card                  //The container to show existing property statuses and descriptions
+  },
+  setup() {
+    const carouselSlides = ["search_property.png", "open_house.png", "home_cover.png"]; //the images' file name to be displayed in carousel
+    return { 
+      carouselSlides 
+    };
   },
   data(){
     return{
-      pic: '',
+      // The title of each slide in carousel
       titles: ["Search for properties", "Come for an inspection", "Get your own living space"],
+
+      //the property statuses' description
       actionDesc: ["We provide the flexibility for you to find the right properties based on your preferences. Make your own account with us now and get notified for latest properties!",
                   "To rent a property, our platform provides ranges of prices according to your budget and requirements. Make your own account with us now and get notified for latest properties!",
                   "To sell a property, our platform is able to differ selling type. Seller can do an auction or private sale to interested buyers. Get your agency's code and create an account with us as an agent!"]

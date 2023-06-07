@@ -1,7 +1,9 @@
 <template>
-    <div class="label">{{priceMinMax }}</div>
 
-    <Slider v-model="value" :min="0" :max="maxNum" :merge="10" :tooltips="isShow"  :tooltipPosition="'bottom'" class="slider-blue" @update="rangeValue()"></Slider>
+    <!--Displaying the range of the slider value-->
+    <div class="label">{{ priceMinMax }}</div>
+    <Slider v-model="value" :min="0" :max="maxNum" :merge="10" :tooltips="false"  :tooltipPosition="'bottom'" class="slider-blue" @update="rangeValue"></Slider>
+
 </template>
   
 <script>
@@ -11,43 +13,35 @@
             Slider
         },
         props: {
-            timesNum: Number,
-            name: String,
+            timesNum: Number,                                           //the multiplication of the slider value
+            name: String,                                               //the name of the slider is used for (price/land size)
         },
         data(){
             return{
-                minValue: 0,
-                maxValue: 0,
-                priceMinMax: "Any Price",
-                value: [0, 0],
-                maxNum: 0,
-                format: function (value) {
-                    if(value == 51){
-                        return 'Any'
-                    }else{
-                        return `${Math.round(value * 100) + "m"}`
-                    }
-                },
-                isShow: false,
-                index: 0,
+                minValue: 0,                                             //minimal value of the slider
+                maxValue: 0,                                             //maximal value of the slider
+                priceMinMax: "Any Price",                                //the initial display of the slider range value
+                value: [0, 0],                                           //the min and max value of the current slider 
+                maxNum: 0,                                               //maximum slider value according to the input name
+                index: 0,                                                //index of the filtering form order
                 
             }
         },
+        //set up the configuration of the slider accoring to its name/type (price/land size)
         created(){
             if(this.name == "price"){
                 this.maxNum = 31;
                 this.priceMinMax = "Any Price";
                 this.index = 2;
-                this.isShow = false;
             }else if(this.name == "size"){
                 this.maxNum = 21;
                 this.priceMinMax = "Any Size";
                 this.index = 6;
-                this.isShow = false;
             }
             this.value[1] = this.maxNum;
         },
         methods:{
+            //passing the current range value of the slider inputted by the user
             rangeValue: function(){
 
                 this.minValue = this.value[0];
@@ -69,6 +63,7 @@
                 this.$emit("change-range", [this.index, realMinValue, realMaxValue]);
 
             },
+            //format teh text to be displayed to show the range of the slider value
             formatText: function(val){
                 if(this.name == 'price'){
                     return "$"+ (val * this.timesNum).toLocaleString('en-US');

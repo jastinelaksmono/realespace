@@ -1,11 +1,15 @@
 <template>
   <div class="container-fluid topPadding">
     <div class="row loginSignupContainer">
+
+      <!--Display image for creating an account-->
       <div class="col-sm">
         <img src="../assets/img/create_account.png" alt="pic" class="pic" />
       </div>
+
       <div class="col-sm">
 
+        <!--Display the page text-->
         <div class="row rowContainer paddingTop" style="flex-direction: column;" >
           <div class="col title">
               Join Us! 
@@ -13,62 +17,45 @@
           <div class="col subtitle">Create a new account or login to your existing account</div> 
         </div>
 
+        <!--Display the tab options for login or signup-->
         <div class="row rowContainer" style="padding: 0vw 3vw 0vw 3vw; margin-bottom: 0vw;">
-          <div class="col" v-for="(tab, index) in tabs" :key="index" >
+          <div class="col" v-for="tab in tabs">
             <Tab :tabName=tab v-model="currentTab" @click="changeTab(tab)" :class="changeStatus(tab, currentTab)?'active':''"></Tab>
           </div>
         </div>
 
-
-        <LoginSignupForm :formName="currentTab" class="row rowContainer" style="margin-top: 0vw;" v-if="currentTab==tabs[0]"></LoginSignupForm>
-        <LoginSignupForm :formName="currentTab" class="row rowContainer" style="margin-top: 0vw;" v-else-if="currentTab==tabs[1]"></LoginSignupForm>
-
+        <!-- Display the registration form-->
+        <Registration :formName="currentTab" class="row rowContainer" style="margin-top: 0vw;" v-if="currentTab==tabs[0]"></Registration>
+        <Registration :formName="currentTab" class="row rowContainer" style="margin-top: 0vw;" v-else-if="currentTab==tabs[1]"></Registration>
       
       </div>
+
     </div>
   </div>
-
-  
-    <!--
-      <div class="row titleContainer paddingTop" style="flex-direction: column;">
-          <div class="col title">
-            What role are you aiming?
-          </div>
-          <div class="col subtitle">Choose one of the option below</div> 
-        </div>
-
-        <div class="row">
-          <div class="col-sm">
-            <img src="../assets/img/agent.png" alt="pic" class="rolePic" />
-          </div>
-          <div class="col-sm">
-            <img src="../assets/img/buyer_renter.png" alt="pic" class="rolePic" />
-          </div>
-        </div>
-    -->
-     
-
 </template>
   
 <script>
   import Tab from '../components/Tab.vue';
-  import LoginSignupForm from '../process/LoginSignupForm.vue';
+  import Registration from '../process/Registration.vue';
   export default {
     name: 'LoginSignup',
-    components:{
-      Tab,
-      LoginSignupForm
+    components:{  
+      Tab,                      //the tab component for the registration form options
+      Registration              //the login/signup form
     },
     data(){
       return{
-        tabs: ["Login", "Signup"],
-        currentTab: 'Login',
+        tabs: ["Login", "Signup"],      //the form names
+        currentTab: 'Login',            //the current tab selected
       }
     },
     methods:{
+      //assign current tab name
       changeTab: function(name){
         this.currentTab = name;
       },
+
+      //change the status of the selected tab
       changeStatus: function(tabName, currentTab){
         return tabName == currentTab;
       }

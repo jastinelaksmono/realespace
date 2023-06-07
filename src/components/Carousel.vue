@@ -31,11 +31,13 @@
   export default {
     props: ["startAutoPlay", "timeout", "navigation", "pagination"],
     setup(props) {
-      const currentSlide = ref(1);
-      const getSlideCount = ref(null);
-      const pagintationEnabled = ref(
-      props.pagination === undefined ? true : props.pagination
-      );
+      const currentSlide = ref(1);            // the current slide
+      const getSlideCount = ref(null);        // the total number of slides (images appear)
+
+      // the status of pagination
+      const pagintationEnabled = ref(props.pagination === undefined ? true : props.pagination);
+
+      // the navigation status
       const navEnabled = ref(props.navigation === undefined ? true : props.navigation);
 
       // next slide
@@ -82,6 +84,7 @@
           navEnabled,
       };
     },
+    //the slide to be automatically transitioned on created
     created: function() {
       this.autoPlay();
     }

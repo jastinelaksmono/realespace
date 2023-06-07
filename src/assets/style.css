@@ -141,8 +141,6 @@ select {
   font-size: 1.5vw;
 }
 
-
-
 @media (max-width: 992px) {
   .errorMsg{
     font-size: 2.5vw;

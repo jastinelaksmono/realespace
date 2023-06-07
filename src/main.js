@@ -11,8 +11,8 @@ const router = createRouter({
     history: createWebHistory(),
 	routes: [
 	{
-		path: '/App',
-        name: "App",
+		path: '/',
+        name: "",
         component: HomePage,
 	},
 	{
@@ -59,5 +59,20 @@ const currentUser = {
 const app = createApp(App)
 //create new vue instance  
 
+// global object for current user logged in
 app.config.globalProperties.currentUser = currentUser;
+
+// global custom directive for show and hide password
+app.directive('password', (el, binding) => {
+	const inputType = el.getAttribute('type');
+		el.setAttribute('type', binding.value ? 'text' : 'password');
+		console.log(inputType);
+})
+
+// global custom directive for single active tab
+app.directive('single-tab', (el) => {
+	el.style.color = "#ffffff"
+	el.style.background = "#5379F6";
+})
+
 app.use(router).mount('#app');

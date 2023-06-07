@@ -1,4 +1,5 @@
 <template>
+    <!-- Display Card of property type -->
     <div class="col tripleContainer">
         <div class="imgContainer">
             <img :src="require(`../assets/img/${img}`)" alt="pic" class="pic"/>
@@ -13,15 +14,16 @@
 <script>
   export default {
     props: {
-        title: String,
-        fileName: String,
-        desc: String
+        title: String,          //the name of the property type
+        fileName: String,       //the file name of the image
+        desc: String            //the description of eahc property type
     },
     data(){
         return{
-           name: this.title == null ? 'null' : this.title,
-           img: this.fileName == null ? 'null' : this.fileName,
-           actionDesc: this.desc == null ? 'null' : this.desc
+            //get all the props and check if null or not
+            name: this.title == null ? 'null' : this.title,
+            img: this.fileName == null ? 'null' : this.fileName,
+            actionDesc: this.desc == null ? 'null' : this.desc
         }
     }
   };

@@ -1,6 +1,10 @@
 <template>
+
+    <!-- Displaying reusable add/update and delet form-->
     <form ref="addPropertyForm">
         <fieldset><legend class="formTitle">{{setFormTitle()}}</legend></fieldset>
+
+        <!--Displaying the property id and agent username field-->
         <div class="row" >
             <div class="col left">
                 <label for="propId">Property ID</label>
@@ -9,16 +13,21 @@
             </div>
             <div class="col right" >
                 <label for="agent">Agent Username</label>
+                <div v-if="err!= ''" class="errorMsg">&nbsp;</div>
                 <select class="dropbtn field" id="agent" v-model="dataProps[1][1]" :class="dataProps[1][1]=='' ? '' : 'optionSelected'">
                     <option value="" disabled >{{ passedData[0] == 'edit' ? "Choose an option" : currentUser.username }}</option>
                     <option v-for="username in existingAgents" :value=username>{{username}}</option>
                 </select>
             </div>
         </div>
+
+        <!--Displaying the property address field-->
         <div class="row">
             <label for="address">Address</label>
             <input type="text" id="address" class="field" v-model="dataProps[0][1]" placeholder="Input property address"/>
         </div>
+
+        <!--Displaying the property subrub and postcode field field-->
         <div class="row">
             <div class="col left">
                 <label for="suburb">Suburb</label>
@@ -30,6 +39,7 @@
             </div>
         </div>
 
+        <!--Displaying the property bedroom and bathroom field-->
         <div class="row">
             <div class="col left">
                 <label for="bedroom">Bedroom</label>
@@ -41,6 +51,7 @@
             </div>
         </div>
 
+        <!--Displaying the car spaces and land size field-->
         <div class="row">
             <div class="col left">
                 <label for="carSpace">Car Space</label>
@@ -52,6 +63,7 @@
             </div>
         </div>
 
+        <!--Displaying the property type and status field-->
         <div class="row">
             <div class="col left">
                 <label for="type">Type</label>
@@ -72,6 +84,7 @@
             </div>
         </div>
 
+        <!--Displaying the property price and sale method field-->
         <div class="row">
             <div class="col left">
                 <label for="price">Price</label>
@@ -88,6 +101,7 @@
             </div>
         </div>
 
+        <!--Displaying the add / update and delete button-->
         <div class="row" style="margin-top: 3vw;">
             <button v-if="passedData[0] == 'add'" type="button" class="field btn" @click="validateNewId()">Add</button>
             <div class="col left" v-if="passedData[0] == 'edit'">
@@ -111,9 +125,9 @@ export default {
     },
     data(){
         return{
-            formTitle: '',
-            err: '',
-            dataProps: [
+            formTitle: '',                      //the form name
+            err: '',                            //the error message for validation
+            dataProps: [                        //the updated information of the property
                 ["address", ""],                //0
                 ["agent", ""],                  //1
                 ["bathrooms", ""],              //2
@@ -128,11 +142,12 @@ export default {
                 ["type", ""],                   //11
                 ["propId", ""]                  //12
             ],
-            existingAgents: [],
-            isIdValid: true,
-            updates: {},
+            existingAgents: [],                 //array of existing agents in the same company
+            isIdValid: true,                    //the property id validity
+            updates: {},                        //Saving the updates of the property to be send to teh database
         }
     },
+    //Setting the form title and retrieve data on created
     created(){
         if(this.passedData[0] == 'edit'){
             this.passedData[2] = this.passedData[2].toLowerCase();
@@ -143,9 +158,13 @@ export default {
         }
     },
     methods:{
+
+        //Set the form title according to the form name/type
         setFormTitle: function(){
             return this.passedData[0] == 'add' ? 'Add New Property' : 'Edit Property';
         },
+
+        //Validate the property id
         validateNewId: function(){
             if(this.dataProps[12][1] == ''){
                 this.err = 'Property ID cannot be empty';
@@ -163,10 +182,13 @@ export default {
                     this.err = '';
                     this.writeNewProperty();
                 }else{
-                    this.err ='*Id has been used';
+                    this.err ='Id has been used';
+                    this.isIdValid = true;
                 }
             }
         },
+
+        //add a new property to the database
         writeNewProperty: function(){
             const propRef = ref(db, 'properties/' + this.dataProps[12][1]);
             set(propRef, {
@@ -186,6 +208,8 @@ export default {
             });
             this.$emit('execute-operation', [this.passedData[2], "Property successfully added!"]);
         },
+
+        //delete selected property to the database
         deleteProperty: function(){
             const deletes = {};
             deletes['/'+ this.passedData[2] + '/' + this.passedData[1]] = null;
@@ -193,6 +217,8 @@ export default {
             update(ref(db), deletes);
             this.$emit('execute-operation', [this.passedData[3], "Property successfully deleted!"]);
         },
+
+        //update selected property's attributes/information to the database using key-value pair
         executeProperties: function(operation){
             var propRef = ref(db, this.passedData[2] + '/' + this.passedData[1]);
             onValue(propRef, (snapshot) => {
@@ -212,6 +238,8 @@ export default {
                 this.$emit('execute-operation', [this.passedData[3], "Property successfully updated!"]);
             }
         },
+
+        //Delete the selected property from the users' favourites list
         deleteFromFav: function(deletes){
             var agentRef = ref(db, 'seekers');
             onValue(agentRef, (snapshot) => {
@@ -224,6 +252,8 @@ export default {
                 });
             });
         },
+
+        //Get all the name of agents of the same agency
         retrieveAgents: function(){
             var agentRef = ref(db, 'agents');
             onValue(agentRef, (snapshot) => {

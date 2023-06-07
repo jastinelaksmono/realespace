@@ -1,4 +1,5 @@
 <template>   
+    <!-- Displaying a clickable tab with an image and description -->
     <div class="square">
         <div v-if="name == 'All'" class="">All</div>
         <img v-else :src="require(`../assets/img/${fileName.toLowerCase()}.png`)" alt="icons_pic" :class="changeIcon(name) "/>
@@ -8,17 +9,11 @@
 <script>
 export default {
     props: {
-        name: String,
-        fileName: String,
-    },
-    data(){
-        return{
-
-        }
-    },
-    created(){
+        name: String,           //the name of the tab
+        fileName: String,       //the image file name 
     },
     methods:{
+        //change the icon colour by changing the url through the applied class
         changeIcon: function(name){
             let nameEnd = name.split(" ");
             return "squareIcon " + nameEnd[0].toLowerCase() + "Icon";
@@ -82,23 +77,6 @@ export default {
     .square{
         font-size: 12vw;
     }
-
-    /*
-    .sActive{
-        border-color: #5379F6;
-        background-color: white;
-        color: #5379F6;
-    }
-
-    .sActive .houseIcon{
-        content:url("../assets/img/house_blue.png");
-    }
-
-    .sActive .apartmentIcon {
-        content:url("../assets/img/apartment_blue.png");
-    }
-     */
-    
     .square:hover{
         border-color: transparent;
         background-color: #5379F6;

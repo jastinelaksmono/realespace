@@ -1,11 +1,12 @@
 <template>   
 
+    <!--Display add new property button-->
     <div class="row" v-if="currentUser.userType == 'agents'">
         <button type="button" class="col-sm-3 field btn" @click="openPopup('add')">+ add new property</button>
     </div>
 
     <!-- Pop up box -->
-    <Popup v-if="popupTrigger == true" :formName="toggledButton" @close-popup="closePopup" @update-list="updateList"></Popup>
+    <Popup v-if="popupTrigger == true" :formName="inputInformation" @close-popup="closePopup" @update-list="updateList"></Popup>
 
     <!-- Table title and filter -->
     <div class="row" v-if="currentUser.userType == 'agents'">
@@ -15,41 +16,33 @@
         </div>
     </div>
 
-    <!-- Table list of properties -->
-    <div class="tableContainer"  v-if="currentUser.userType == 'agents'">
-        <div class="row" style="paddingLeft: 2.5vw">
-            <div :class="adjustColSize(index, 'header')" v-for="(header, index) in headers" :key="index">
+    <!-- Table list of properties added by a logged in agent/their agency-->
+    <table v-if="currentUser.userType == 'agents'" class="container-fluid mt-3">
+        <tr>
+            <td :class="isFirstCol(index) + ' headerText'" v-for="(header, index) in headers" :key="index">
                 {{ formatHeader(header, index) }}
-            </div>
-        </div>
-        <div class='row dataRow' v-for="(property, index) in getItems" :key="index">
-            <div :class="adjustColSize(index, lister)" v-for="(prop, index) in property" :key="index">{{index != headers.length-1 ? prop: ''}}
+            </td>
+        </tr>
+
+        <tr class='dataRow px-5' v-for="(property, index) in getItems" :key="index">
+            <td v-for="(prop, index) in property" :key="index" :class="isFirstCol(index)">{{index != headers.length-1 ? prop: ''}}
                 <button class='editButton' id='edit' v-if="index == headers.length-1 && lister == 'me'" @click="openPopup('edit ' + prop)">
                     edit
                 </button>
-            </div>
+            </td>
+        </tr>
+    </table>
 
-        </div>
-
-    
-
-    </div>
-
-    <div class="row">
-        <PropertiesList :selectedTab="selectedTab" :passed-filter="[]" v-if="selectedTab == 'Favourites'"></PropertiesList>
-    </div>
-
-    <!-- Vuejs Paginate -->
-    <paginate 
-            :page-count="2"    
-            :page-range="5" 
-            :margin-pages="1"
-            :click-handler="clickCallback" 
-            :prev-text=" 'Prev' "       
-            :next-text="'Next'" 
-            :container-class="'pagination'" 
-            :active-class="'currentPage'">
-        </paginate>
+    <!-- Vuejs Paginate list of properties-->
+    <Paginate v-if="selectedTab == 'Properties' && getItems.length!=0"
+        :page-count="pageCount"    
+        :margin-pages="1"
+        :click-handler="clickCallback" 
+        :prev-text=" 'Prev' "       
+        :next-text="'Next'" 
+        :container-class="'pagination'" 
+        :active-class="'active'">
+    </Paginate>
 
 </template>
   
@@ -58,36 +51,35 @@ import db from "../firebase/index";
 import { ref, set, onValue, update } from "firebase/database";
 import FilterOption from '@/components/FilterOption.vue';
 import Popup from "../components/Popup.vue";
-import paginate from "vuejs-paginate-next";
-import PropertiesList from "../process/PropertiesList.vue";
+import Paginate from "vuejs-paginate-next";
 export default {
     props: {
-        selectedTab: String,
+        selectedTab: String,        //the selected tab name
     },
     components:{
-        FilterOption,
-        Popup,
-        paginate,
-        PropertiesList
+        FilterOption,               //the dropdown component
+        Popup,                      //pop up component
+        Paginate,                   //imported pagination component
     },
     data(){
         return{
-            tableTitle: 'Properties listed by',
-            popupTrigger: false,
-            headers: ["type", "address", "size", "suburb", "agent", "propId"],
-            nodes: [],
-            pageCount: 0,
-            currentPage: 1,
-            agentName: '',
-            toggledButton: '',
-            lister: 'me',
+            tableTitle: 'Properties listed by',                                     //The table title
+            popupTrigger: false,                                                    //Pop up trigger button
+            headers: ["type", "address", "size", "suburb", "agent", "propId"],      //list of the property headers
+            nodes: [],                                                              //the list of filtered properties added
+            pageCount: 0,                                                           //pagination's number of page
+            currentPage: 1,                                                         //the pagination current page number
+            agentName: '',                                                          //the current logged in agent name
+            inputInformation: '',                                                   //the content to be passed to popup
+            lister: 'me',                                                           //the chosen lister of the properties (an agent/agency name)
         }
     },
+    //Set the title of the list
     created(){
         this.selectedTab == "Properties" ? this.tableTitle = 'Properties listed by' : this.tableTitle = 'Saved Properties';
-       
     },
     computed: {
+        //List of properties as filtered and sliced according pagination page count
         getItems: function() {
             this.pageCount = Math.ceil(this.nodes.length/5);
             let current = this.currentPage * 5; 
@@ -96,45 +88,32 @@ export default {
         }
     },
     methods:{
-        adjustHeaderSize: function(index){
-            if(index == this.headers.length-1){
-                return 'col blank';
-            }else if(index == 1){
-                return 'col header headerLong';
+        //sets the clicked page
+        clickCallback: function(pageNum) {
+            this.currentPage = Number(pageNum);
+        },
+
+        //sets the padding of the first column of the list
+        isFirstCol: function(index){
+            if(index == 0){
+                return "text paddingLeft";
             }else{
-                return 'col header';
+                return "text";
             }
         },
-        adjustColSize: function(index, filter){
-            var format = [];
-            if(filter != 'me'){
-                format[0] = "blank";
-                format[1] = filter == 'header'? "header" : "dataCol";
-            }else{
-                format[0] = "editBtnContainer";
-                format[1] = "dataCol";
-            }
-            
-            if(index == 1){
-                return 'col ' + format[1] + ' headerLong';
-            }else if(index == 0 || index ==3){
-                return 'col ' + format[1] + ' headerMedium';
-            }
-            else if(index == this.headers.length-1){
-                return 'col ' + format[0];
-            }
-            else{
-                return 'col ' + format[1];
-            }
-             
-        },
+
+        //Display or open the popup panel
         openPopup: function(selectedBtn){
-            this.toggledButton=selectedBtn + " " + this.selectedTab + " " + this.lister;
+            this.inputInformation=selectedBtn + " " + this.selectedTab + " " + this.lister;
             this.popupTrigger = true;
         },
+
+        //Hide or close the popup panel
         closePopup: function(e){
             this.popupTrigger = e;
         },
+
+        //update the added properties list
         updateList: function(e){
             this.lister = e;
             var listRef = ref(db, this.selectedTab.toLowerCase());
@@ -163,6 +142,8 @@ export default {
                 });
             });
         },
+        
+        //format the header text of the table/list of added properties
         formatHeader: function(header, index){
             var headerTitle = "";
             if(index != this.headers.length-1){
@@ -171,19 +152,16 @@ export default {
                     headerTitle  += " m" + decodeURI('%C2%B2');
                 }
             }
-
             return headerTitle;
         },
+
+        //Retrieve existing agents' name of the same agency of teh current logged in agent
         getAgentName: function(agent){
             var listRef = ref(db, 'agents/' + agent);
             onValue(listRef, (snapshot) => {
                 this.agentName = snapshot.val().fname;
             });
         },
-        //sets the clicked page
-        clickCallback: function(pageNum) {
-            this.currentPage = Number(pageNum);
-        }
     }
 };
 </script>
@@ -195,14 +173,6 @@ export default {
     font-size: 3vw;
     color: #5379F6;
     width: 40%;
-}
-
-.tableContainer{
-    border: 0;
-    border-collapse: collapse;
-    outline: none;
-    border-radius: 2vw;
-    margin-top: 2vw;
 }
 
 /* || Button */
@@ -218,34 +188,9 @@ export default {
     background-color: white;
 }
 
-
-/* || Header */
-.header{
-    font-family: NunitoSemiBold;
-    font-size: 2vw;
-    color: #7A7A7A;
-    padding-bottom: 1vw;
-    display: flex;
-    flex-direction: row;
-    padding-left: 0;
-}
-.headerLong{
-    flex-grow: 0;
-    flex-basis: 30%;
-}
-
-.headerMedium{
-    flex-grow: 0;
-    flex-basis: 18%;
-}
-.blank{
-    flex-grow: 0;
-    flex-basis: 12%;
-}
-
 /* || Data */
 .dataRow{
-    padding: 1vw 0vw 1vw 2.5vw;
+    padding: 1vw 2vw 1vw 2.5vw;
 }
 .dataRow:hover{
     box-shadow: 0px 2px 3px #636363;
@@ -275,7 +220,8 @@ export default {
     font-family: NunitoRegular;
     color: white;
     font-size: 2vw;
-    padding: 0.2vw 1vw 0.2vw 1vw;
+    padding: 0.5vw 1vw 0.5vw 1vw;
+    margin: 0vw 1vw 0vw 0vw;
 }
 
 .editButton:hover #editBtnIcon{
@@ -287,19 +233,34 @@ export default {
     margin: 0.5vw 0vw 0.5vw 0.2vw;
 }
 
+
+/** Table text */
+.headerText{
+    font-size: 1.5vw;
+    color: #7A7A7A;
+}
+.text{
+    font-family: NunitoBold;
+    font-size: 2vw;
+    padding-top: 2vw;
+    padding-bottom: 2vw;
+}
+
+.paddingLeft{
+    padding-left: 1.5vw;
+}
+
+.pagination{
+  position: relative;
+  margin-top: 4vw;
+  font-family: NunitoSemiBold;
+}
+
 @media (max-width: 992px) {
     
 }
 
 @media (max-width: 576px) {
-    .header{
-        font-size: 1.5vw;
-    }
-
-    .blank{
-        flex-grow: 0;
-        flex-basis: 14%;
-    }
 
     .btn{
         width: 30vw;

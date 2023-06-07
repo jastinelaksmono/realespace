@@ -1,6 +1,9 @@
 <template>   
+
+  <!--The login/signup form-->
   <form class="formContainer" ref="form">
 
+    <!--The input fields required for signup only-->
     <div v-if="name == 'Signup'" class="row group">
       <label for="fname">First Name</label>
       <div v-if="errors[0]!= ''" class="errorMsg">*{{errors[0]}}</div>
@@ -13,9 +16,9 @@
       <label for="email">Email</label>
       <div v-if="errors[2]!= ''" class="errorMsg">*{{errors[2]}}</div>
       <input type="email" id="email" class="field" v-model="email" placeholder="your email here"/>
-
     </div>
 
+    <!--The input field required for both login and signup-->
     <div class="row group">
       <label for="username">Username</label>
       <div v-if="errors[3]!= ''" class="errorMsg">*{{errors[3]}}</div>
@@ -23,9 +26,10 @@
 
       <label for="pass">Password</label>
       <div v-if="errors[4]!= ''" class="errorMsg">*{{errors[4]}}</div>
-      <input type="password" id="pass" class="field" v-model="pass" placeholder="your password"/>
-
-      
+      <input type="password" id="pass" class="col-9 field left"  v-model="pass"  placeholder="your password" v-password="showPassword"/>
+      <button type="button"  @click="showPassword = !showPassword" class="col field btn">{{ showPassword ? 'Hide' : 'Show' }}</button>
+     
+  
       <label>Choose your role</label>
       <div v-if="errors[5]!= ''" class="errorMsg">*{{errors[5]}}</div>
       <div id="agent" 
@@ -37,9 +41,12 @@
             class="col field bordered right" 
             @click="setUserType('seekers')" 
             :class="userType == 'seekers' ?'active':''">
-          Buyer/Renter</div>
+          Buyer/Renter
+      </div>
+    </div>
 
-      
+    <!--The code input required when first register/signup only-->
+    <div class="row group">
       <div v-show="name == 'Signup' && userType=='agents'" class="codeContainer">
         <label for="code">Agency Code</label>
         <input type="text" id="code" class="field" v-model="code" placeholder="your agency code"/>
@@ -47,7 +54,8 @@
       </div>
     </div>
 
-    <div class="row group">
+    <!--The button to reset and login/signup to an account-->
+    <div class="row group mt-5">
       <button class="col field reverse left" @click="reset()">Reset</button>
       <button type="button" class="col field btn" @click="validateAll()">{{name}}</button>
     </div>
@@ -58,30 +66,49 @@
 <script>
   import db from "../firebase/index";
   import { getDatabase, ref, set, onValue, update } from "firebase/database";
+
+  const passBtn = {
+	method: (el) => {
+		const toggleBtn = el.nextElementSibling;
+		toggleBtn.classList.add('password-toggle');
+
+		toggleBtn.addEventListener('click', () => {
+			const inputType = el.getAttribute('type');
+			el.setAttribute('type', inputType == 'password' ? 'text' : 'password');
+			console.log(inputType);
+		});	
+	}
+  }
+
   export default {
     props:{
       formName: String
     },
     data(){
       return{
-        name: this.formName == null ? 'null' : this.formName,
-        fname: '',
-        lname: '',
-        email: '',
-        username: '',
-        pass: '',
-        userType: '',
-        code: '',
-        errors: ['','','','','','',''],
-        isUsernameExist: false,
-        fullname: '',
-        agency: '',
+        name: this.formName == null ? 'null' : this.formName,       //the form name (login/singup)
+        fname: '',                                                  //the user's first name 
+        lname: '',                                                  //the user's last name 
+        email: '',                                                  //the user's email
+        username: '',                                               //the user's username
+        pass: '',                                                   //the user's password
+        userType: '',                                               //the user's account type (agents/seekers)
+        code: '',                                                   //the agency code for agent to reguster new account
+        errors: ['','','','','','',''],                             //the error message for each input field validation
+        isUsernameExist: false,                                     //the status username inputted by the user
+        fullname: '',                                               //combined user's first and last name
+        agency: '',                                                 //the agency name 
+        showPassword: false
       }
     },
     methods:{
+  
+      //set the user's user type
       setUserType: function(type){
         this.userType = type;
       },
+
+      //Validate the login/signup form submitted
       validateAll: function(){
 
         if(this.fname == ''){
@@ -138,6 +165,7 @@
           this.errors[6] = '';
         }
 
+        //Validate based on input fields required for each form
         if(this.name == "Login"){
           if(this.isValid(3,5)){
             this.login();
@@ -147,8 +175,9 @@
             this.signup();
           }
         }
-
       },
+
+      //The validity counted from the error messages found
       isValid(start, end){
         let count = 0;
         for(let i=start; i<=end; i++){
@@ -158,6 +187,8 @@
         }
         return count == 0;
       },
+
+      //Login to an existing user account
       login(){
         var userRef = ref(db, this.userType + '/' + this.username);
         onValue(userRef, (snapshot) => {
@@ -170,6 +201,8 @@
             }
         });
       },
+
+      //signing up to a new account
       signup(){
         this.checkUsername();
         if(this.isUsernameExist){
@@ -183,6 +216,8 @@
           }
         }
       },
+
+      //The validity of the inputted username 
       checkUsername: function(){
         var userRef = ref(db, this.userType + '/' + this.username);
         onValue(userRef, (snapshot) => {
@@ -192,6 +227,8 @@
             }
         });
       },
+
+      //Check the correctness of the password inputted to the database
       matchPassword: function(){
           var userRef = ref(db, this.userType + '/' + this.username + '/pass');
           onValue(userRef, (snapshot) => {
@@ -202,6 +239,8 @@
               }
           });
       },
+
+      //Check the listed agency code inputted by the agent to the database
       checkCode: function(){
         var userRef = ref(db, 'agencies');
         onValue(userRef, (snapshot) => {
@@ -220,10 +259,14 @@
             }
         });
       },
+
+      //Navigate the page to my activities page when form is successfully validated
       changeRoute(){
         this.currentUser.setAll(this.userType, this.username, this.fullname, this.agency);
         this.$router.replace({ path: '/MyActivities' });
       },
+
+      //create a new agent/seeker account to the databade
       createNewAccount: function(){
         const userRef = ref(db, this.userType + "/" + this.username);
             set(userRef, {
@@ -234,6 +277,8 @@
             });
             this.userType == "agents" ? set(ref(db, this.userType + "/agency"),{agency: this.agency}): '';
       },
+
+      //reset the login/signup form
       reset() {
 			  this.$refs.form.reset();
       }
@@ -268,7 +313,6 @@
 }
 
 .btn{
-  margin-top: 3vw;
   background-color: #5379F6;
   color: white;
 }
@@ -280,7 +324,6 @@
 }
 
 .reverse{
-  margin-top: 3vw;
   background-color: white;
   color: #5379F6;
 }
